@@ -14,7 +14,7 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
-            font-family: ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji; /* 使用弹窗内的字体 */
+            font-family: Arial, sans-serif; /* 修改为常规字体 */
         }
 
         .header {
@@ -78,6 +78,7 @@
             border-radius: 12px;
             padding: 10px 20px;
             transition: background-color 0.2s;
+            font-family: Arial, sans-serif; /* 修改为常规字体 */
         }
 
         button:hover {
@@ -169,7 +170,7 @@
             background-color: transparent;
             color: #2D2C4A;
             text-align: center;
-            font-family: "ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji";
+            font-family: Arial, sans-serif; /* 修改为常规字体 */
             font-size: 18px;
             font-style: normal;
             font-weight: 500;
@@ -204,7 +205,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             animation: fadeIn 0.5s ease-in;
             position: relative;
-            font-family: 'ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji', cursive, sans-serif; /* 使用手写体 */
+            font-family: Arial, sans-serif; /* 修改为常规字体 */
             background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); /* 渐变背景 */
         }
 
@@ -238,6 +239,7 @@
             color: #2d3748;
             font-size: 16px;
             line-height: 1.5;
+            font-family: Arial, sans-serif; /* 修改为常规字体 */
         }
 
         .purple-link {
@@ -250,7 +252,7 @@
 
     <header class="header">
         <img src="logo.svg" alt="Logo" class="h-8">
-        <button class="about-button" style="font-family: 'Comic Sans MS', cursive, sans-serif;" onclick="showAbout()">About</button>
+        <button class="about-button" style="font-family: Arial, sans-serif;" onclick="showAbout()">About</button>
     </header>
 
     <div id="chat" class="flex-1 max-w-2xl mx-auto p-4 space-y-4 overflow-y-scroll scrollbar-hidden">
@@ -279,11 +281,11 @@
 
     <div id="aboutModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h2>About</h2>
-                <span class="close" onclick="closeModal()">&times;</span>
+            <div class="modal-header flex justify-between items-center border-b pb-2 mb-4">
+                <h2 class="text-lg font-semibold">About</h2>
+                <span class="close cursor-pointer text-xl" onclick="closeModal()" style="font-weight: 300;">&times;</span>
             </div>
-            <div class="modal-body">
+            <div class="modal-body text-gray-700 text-base leading-6">
                 <p>The whole project is developed using <a href="https://www.cursor.com/" target="_blank" class="purple-link">Cursor</a> and generates images through <a href="https://pollinations.ai/" target="_blank" class="purple-link">Pollination</a>.</p>
                <br>
                 <p>by <a href="https://twitter.com/Magic_grass99" target="_blank" class="purple-link">Magic grass</a>  🍃</p>
