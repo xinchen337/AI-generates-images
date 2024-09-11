@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f7fafc;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            font-family: 'Comic Sans MS', cursive, sans-serif; /* 使用弹窗内的字体 */
+        }
+
+        .header {
+            display: flex;
+            width: 100vw; /* 修改为视窗宽度 */
+            max-width: 100%; /* 确保最大宽度为100% */
+            padding: 20px;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f7fafc;
+            color: #2d3748;
+            /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 20px;
+        }
+
+        .dialog {
+            display: flex;
+            max-width: 800px;
+            padding: 15px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .dialog-text {
+            color: #2d3748;
+            font-size: 14px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            border: 1px solid #E9E9F1;
+            border-radius: 12px;
+            padding: 12px 16px; /* 增加内边距 */
+            transition: border-color 0.2s, box-shadow 0.2s; /* 增加阴影过渡 */
+            font-size: 16px; /* 增加字体大小 */
+            background-color: #ffffff; /* 增加背景颜色 */
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #805ad5;
+            box-shadow: 0 0 0 3px rgba(128, 90, 213, 0.5); /* 增加阴影 */
+            background-color: #fff; /* 聚焦时背景变白 */
+        }
+
+        button {
+            margin-left: 10px;
+            background-color: #805ad5;
+            color: white;
+            border-radius: 12px;
+            padding: 10px 20px;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #6b46c1;
+        }
+
+        .scrollbar-hidden::-webkit-scrollbar {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .loading.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .message {
+            margin-bottom: 24px;
+        }
+
+        .welcome-message {
+            margin-bottom: 24px;
+        }
+
+        .fancy-welcome {
+            background: linear-gradient(135deg, #414249 0%, #26262b 100%);
+            border: 2px solid #222429;
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            animation: fancyFadeIn 1s ease-in-out;
+            transition: transform 0.1s, box-shadow 0.1s;
+            cursor: pointer;
+        }
+
+        .fancy-welcome:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .fancy-welcome:active {
+            transform: scale(0.95);
+        }
+
+        .highlight {
+            color: #00ccff;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        @keyframes fancyFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .about-button {
+            display: flex;
+            padding: 12px 16px;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            border-radius: 8px;
+            border: none;
+            background-color: transparent;
+            color: #2D2C4A;
+            text-align: center;
+            font-family: "PingFang SC";
+            font-size: 18px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 20px; /* 111.111% */
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .about-button:hover {
+            background-color: var(---600, #EEEEF5);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease-in;
+            position: relative;
+            font-family: 'Comic Sans MS', cursive, sans-serif; /* 使用手写体 */
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); /* 渐变背景 */
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #2d3748;
+            text-decoration: none;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .modal-body {
+            color: #2d3748;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .purple-link {
+            color: #805ad5; /* 设置链接颜色为紫色 */
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <img src="logo.svg" alt="Logo" class="h-8">
+        <button class="about-button" style="font-family: 'Comic Sans MS', cursive, sans-serif;" onclick="showAbout()">About</button>
+    </header>
+
+    <div id="chat" class="flex-1 max-w-2xl mx-auto p-4 space-y-4 overflow-y-scroll scrollbar-hidden">
+        <div id="defaultWelcomeMessage" class="message bot welcome-message flex items-end space-x-3" style="display: block;">
+            <div class="bubble">
+                <div class="bubble-content fancy-welcome" onclick="window.open('https://twitter.com/Magic_grass99', '_blank')">
+                    <p>Welcome! 👏 <br>I am a simple text generated picture tool. Enter a prompt to generate pictures! <span class="highlight">Click here to visit my Twitter.</span></p>
+                </div>
+            </div>
+        </div>
+        <div id="welcomeMessage" class="message bot welcome-message flex items-end space-x-3" style="display: none;">
+            <div class="bubble">
+                <div class="bubble-content bg-white border border-gray-300 rounded-lg shadow-md p-4 max-w-md">
+                    <p class="text-gray-800 text-base font-normal leading-6">Welcome to the chat interface! How can I assist you today?</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex p-4 border-gray-300 rounded-lg shadow-md">
+        <input type="text" id="userInput" placeholder="Enter your message..." />
+        <button id="sendButton">Send</button>
+    </div>
+
+    <div class="tooltip" style="display:none;">This is a tooltip message</div>
+
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>About</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>The whole project is developed using <a href="https://www.cursor.com/" target="_blank" class="purple-link">Cursor</a> and generates images through <a href="https://pollinations.ai/" target="_blank" class="purple-link">Pollination</a>.</p>
+               <br>
+                <p>by <a href="https://twitter.com/Magic_grass99" target="_blank" class="purple-link">Magic grass</a>  🍃</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function animateBubble(bubble) {
+            gsap.to(bubble, {
+                opacity: 1,
+                duration: 0.5,
+                y: -10,
+                ease: "power2.out"
+            });
+        }
+
+        document.getElementById('sendButton').addEventListener('click', sendMessage);
+        document.getElementById('userInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const userInput = document.getElementById('userInput').value;
+            if (userInput.trim() === '') return;
+
+            const welcomeMessage = document.getElementById('welcomeMessage');
+            if (welcomeMessage) {
+                welcomeMessage.style.display = 'none';
+            }
+
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user flex justify-end';
+            userMessage.innerHTML = `
+            <div class="bubble">
+                <div class="bubble-content bg-purple-600 text-white rounded-lg shadow-md p-4 max-w-md">
+                    <p class="text-base font-normal leading-6">${userInput}</p>
+                </div>
+            </div>
+        `;
+            document.getElementById('chat').appendChild(userMessage);
+            document.getElementById('userInput').value = '';
+
+            const newUserBubble = userMessage.querySelector('.bubble');
+            animateBubble(newUserBubble);
+
+            const loadingMessage = document.createElement('div');
+            loadingMessage.className = 'message bot flex items-end space-x-3';
+            loadingMessage.innerHTML = `
+            <div class="bubble">
+                <div class="bubble-content bg-white border border-gray-300 rounded-lg shadow-md p-4 max-w-md">
+                    <p class="text-gray-800 text-base font-normal leading-6">正在生成回复...</p>
+                </div>
+            </div>
+        `;
+            document.getElementById('chat').appendChild(loadingMessage);
+
+            setTimeout(() => {
+                document.getElementById('chat').removeChild(loadingMessage);
+
+                const botMessage = document.createElement('div');
+                botMessage.className = 'message bot flex items-end space-x-3';
+                const botBubble = document.createElement('div');
+                botBubble.className = 'bubble';
+                const botBubbleContent = document.createElement('div');
+                botBubbleContent.className = 'bubble-content bg-white border border-gray-300 rounded-lg shadow-md p-4 max-w-md';
+
+                const img = document.createElement('img');
+                img.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(userInput)}?width=800&height=400`;
+                img.alt = 'Image generated by the bot';
+                img.className = 'w-full h-auto rounded-lg';
+
+                const loadingImage = document.createElement('p');
+                loadingImage.className = 'text-gray-800 text-base font-normal leading-6';
+                loadingImage.innerText = 'Loading image...';
+                botBubbleContent.appendChild(loadingImage);
+
+                img.onload = () => {
+                    botBubbleContent.removeChild(loadingImage);
+                    botBubbleContent.appendChild(img);
+                };
+
+                img.onerror = () => {
+                    loadingImage.innerText = 'Failed to load image, please try again later.';
+                };
+
+                botBubble.appendChild(botBubbleContent);
+                botMessage.appendChild(botBubble);
+                document.getElementById('chat').appendChild(botMessage);
+
+                animateBubble(botBubble);
+                const chatContainer = document.getElementById('chat');
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 1000);
+        }
+    </script>
+
+    <script>
+        const images = document.querySelectorAll('img[data-src]');
+        const imgObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    imgObserver.unobserve(img);
+                }
+            });
+        });
+
+        images.forEach(image => {
+            imgObserver.observe(image);
+        });
+    </script>
+
+    <script>
+        const tooltip = document.querySelector('.tooltip');
+        button.addEventListener('mouseenter', () => {
+            tooltip.style.display = 'block';
+        });
+        button.addEventListener('mouseleave', () => {
+            tooltip.style.display = 'none';
+        });
+    </script>
+
+    <script>
+        document.querySelector('.fancy-welcome').addEventListener('mousemove', function (e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateX = (y - centerY) / 40;
+            const rotateY = (x - centerX) / -60;
+
+            this.style.transform = `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        document.querySelector('.fancy-welcome').addEventListener('mouseleave', function () {
+            this.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg)';
+        });
+    </script>
+
+    <script>
+        function showAbout() {
+            document.getElementById('aboutModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('aboutModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('aboutModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+
+</body>
+
+</html>
